@@ -1,1 +1,152 @@
 # Say-yes
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>💌</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+  font-family: Arial, sans-serif;
+}
+
+/* floating hearts */
+.heart {
+  position: absolute;
+  color: rgba(255,255,255,0.6);
+  animation: floatUp 6s linear infinite;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+}
+
+/* center card */
+.card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  text-align: center;
+  background: rgba(255,255,255,0.25);
+  padding: 40px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+h1 {
+  color: white;
+  font-size: 28px;
+}
+
+.btn {
+  padding: 12px 22px;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  position: absolute;
+  transition: 0.2s;
+}
+
+#yes {
+  background: #2ecc71;
+  color: white;
+  left: 45%;
+  top: 55%;
+}
+
+#no {
+  background: #e74c3c;
+  color: white;
+  left: 55%;
+  top: 55%;
+}
+
+#msg {
+  display: none;
+  color: white;
+  font-size: 26px;
+  margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>Will you go out with me? 💖</h1>
+  <div id="msg">Yay 💕 You just made my day!</div>
+</div>
+
+<button id="yes" class="btn">Yes 💚</button>
+<button id="no" class="btn">No 💔</button>
+
+<!-- Confetti -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+// floating hearts generator
+setInterval(() => {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "💖";
+  heart.style.left = Math.random() * window.innerWidth + "px";
+  heart.style.fontSize = (12 + Math.random() * 24) + "px";
+  document.body.appendChild(heart);
+
+  setTimeout(() => heart.remove(), 6000);
+}, 300);
+
+// NO button escape logic
+const noBtn = document.getElementById("no");
+
+function moveNo() {
+  const x = Math.random() * (window.innerWidth - 100);
+  const y = Math.random() * (window.innerHeight - 100);
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+
+noBtn.addEventListener("mouseover", moveNo);
+noBtn.addEventListener("click", moveNo);
+
+// YES action
+document.getElementById("yes").addEventListener("click", () => {
+  document.querySelector("h1").style.display = "none";
+  document.getElementById("msg").style.display = "block";
+  noBtn.style.display = "none";
+  document.getElementById("yes").style.display = "none";
+
+  // confetti
+  confetti({
+    particleCount: 200,
+    spread: 90,
+    origin: { y: 0.6 }
+  });
+
+  // send email notification (EmailJS)
+  emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+    to_email: "rahul.ag0106@gmail.com",
+    message: "She clicked YES 💖"
+  }).catch(() => {});
+});
+</script>
+
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+(function(){
+  emailjs.init("YOUR_PUBLIC_KEY");
+})();
+</script>
+
+</body>
+</html>
